@@ -5,7 +5,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const goodsWrapper = document.querySelector('.goods-wrapper');
     const cart = document.querySelector('.cart');
     const category = document.querySelector('.category');
-
+    const loading = () => {
+        goodsWrapper.innerHTML = `<div id="spinner"><div class="spinner-loading"><div><div><div></div>
+        </div><div><div></div></div><div><div></div></div><div><div></div></div></div></div></div>`
+    }
 
     const createCardGoods = (id, title, price, img) => {
         const card = document.createElement('div');
@@ -44,8 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.addEventListener('keydown', closeCart);
     };
 
-
-
     const renderCard = (items) => {
         goodsWrapper.textContent = "";
         items.forEach(({
@@ -58,8 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     };
 
-
     const getGoods = (handler, filter) => {
+        loading();
         fetch('db/db.json')
             .then(response => response.json())
             .then(filter)
@@ -67,26 +68,35 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const randomSort = (item) => {
-
         return item.sort(() => Math.random() - 0.5)
     };
 
     const choiceCategory = (event) => {
         event.preventDefault();
         const target = event.target;
-
         if (target.classList.contains('category-item')) {
             const category = target.dataset.category;
-            getGoods(renderCard, goods => 
-                goods.filter(item => 
+            getGoods(renderCard, goods =>
+                goods.filter(item =>
                     item.category.includes(category))
-               )}
-        };
+            )
+        }
+    };
 
+    const searchGoods = event => {
+        event.preventDefault();
+        const input = event.target.elements.searchGoods;
+        const inputValue = input.value.trim();
+        if (inputValue !== '') {
+            const searchString = new RegExp(inputValue, 'i')
+            getGoods(renderCard, goods => goods.filter(item => searchString.test(item.title)));
+        }
+    }
 
     cartBtn.addEventListener('click', openCart);
     cart.addEventListener('click', closeCart);
     category.addEventListener('click', choiceCategory);
+    search.addEventListener('submit', searchGoods);
 
     getGoods(renderCard, randomSort);
 });
