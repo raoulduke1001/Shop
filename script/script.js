@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const wishList = document.getElementById('wishlist');
     const goodsWrapper = document.querySelector('.goods-wrapper');
     const cart = document.querySelector('.cart');
+    const category = document.querySelector('.category');
+
 
     const createCardGoods = (id, title, price, img) => {
         const card = document.createElement('div');
@@ -44,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cartBtn.addEventListener('click', openCart);
     cart.addEventListener('click', closeCart);
 
+
     const renderCard = (items) => {
         goodsWrapper.textContent = "";
         items.forEach(({
@@ -57,13 +60,34 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
 
-    const getGoods = (handler) => {
+    const getGoods = (handler, filter) => {
         fetch('db/db.json')
             .then(response => response.json())
-            .then(handler)
-            console.log(handler);
+            .then(filter)
+            .then(handler);
     };
 
-    getGoods(renderCard);
+    const randomSort = (item) => {
+
+        return item.sort(() => Math.random() - 0.5)
+    }
+
+    const choiceCategory = (event) => {
+        event.preventDefault();
+        const target = event.target;
+        if (target.classList.contains('category-item')) {
+            const category = target.dataset.category;
+            getGoods(renderCard, (goods) => {
+                const newGoods = goods.filter(item => {
+                    return item.category.includes(category)
+                });
+                return newGoods
+            })
+        }
+    }
+
+    category.addEventListener('click', choiceCategory);
+
+    getGoods(renderCard, randomSort);
 
 });
