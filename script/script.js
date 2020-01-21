@@ -1,10 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
     const search = document.querySelector('.search');
     const cartBtn = document.getElementById('cart');
-    const wishList = document.getElementById('wishlist');
+    const wishListBtn = document.getElementById('wishlist');
     const goodsWrapper = document.querySelector('.goods-wrapper');
     const cart = document.querySelector('.cart');
     const category = document.querySelector('.category');
+    const cartCounter = cartBtn.querySelector('.counter');
+    const wishListCounter = wishListBtn.querySelector('.counter');
+    let wishList = [];
+
     const loading = () => {
         goodsWrapper.innerHTML = `<div id="spinner"><div class="spinner-loading"><div><div><div></div>
         </div><div><div></div></div><div><div></div></div><div><div></div></div></div></div></div>`
@@ -16,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         card.innerHTML = `<div class="card">
             <div class="card-img-wrapper">
             <img class="card-img-top" src="${img}" alt="">
-            <button class="card-add-wishlist"
+            <button class="card-add-wishlist ${wishList.includes(id) ? 'active' : ''}"
             data-goods-id="${id}"></button>
             </div>
             <div class="card-body justify-content-between">
@@ -102,12 +106,47 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 2000)
         }
         input.value = '';
+    };
+
+    const checkCount = () => {
+        wishListCounter.textContent = wishList.length;
+    }
+
+    const storageQuery = (get) => {
+        if (get) {
+            return localStorage.getItem('wishlist')
+        } else {
+            localStorage.setItem('wishlist', JSON.stringify(wishList));
+        }
+    }
+
+    const toggleWishList = (id, elem) => {
+        if (wishList.includes(id)) {
+            wishList.splice(wishList.indexOf(id), 1);
+            elem.classList.remove('active')
+        } else {
+            wishList.push(id);
+            elem.classList.add('active')
+
+        }
+        checkCount()
+        storageQuery()
+    };
+
+    const handlerGoods = event => {
+        const target = event.target;
+
+        if (target.classList.contains('card-add-wishlist')) {
+            toggleWishList(target.dataset.goodsId, target);
+        }
+
     }
 
     cartBtn.addEventListener('click', openCart);
     cart.addEventListener('click', closeCart);
     category.addEventListener('click', choiceCategory);
     search.addEventListener('submit', searchGoods);
+    goodsWrapper.addEventListener('click', handlerGoods);
 
     getGoods(renderCard, randomSort);
 });
