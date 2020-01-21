@@ -49,14 +49,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const renderCard = (items) => {
         goodsWrapper.textContent = "";
-        items.forEach(({
-            id,
-            title,
-            price,
-            imgMin
-        }) => {
-            goodsWrapper.appendChild(createCardGoods(id, title, price, imgMin));
-        })
+        if (items.length) {
+            items.forEach(({
+                id,
+                title,
+                price,
+                imgMin
+            }) => {
+                goodsWrapper.appendChild(createCardGoods(id, title, price, imgMin));
+            })
+        } else {
+            goodsWrapper.textContent = " 🤯 Nothing! Maybe you'll try again? 🤨 ";
+        }
+
     };
 
     const getGoods = (handler, filter) => {
@@ -90,7 +95,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (inputValue !== '') {
             const searchString = new RegExp(inputValue, 'i')
             getGoods(renderCard, goods => goods.filter(item => searchString.test(item.title)));
+        } else {
+            search.classList.add('error');
+            setTimeout(() => {
+                search.classList.remove('error');
+            }, 2000)
         }
+        input.value = '';
     }
 
     cartBtn.addEventListener('click', openCart);
