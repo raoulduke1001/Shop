@@ -43,8 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
         cart.style.display = 'flex';
         document.addEventListener('keydown', closeCart);
     };
-    cartBtn.addEventListener('click', openCart);
-    cart.addEventListener('click', closeCart);
+
 
 
     const renderCard = (items) => {
@@ -70,24 +69,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const randomSort = (item) => {
 
         return item.sort(() => Math.random() - 0.5)
-    }
+    };
 
     const choiceCategory = (event) => {
         event.preventDefault();
         const target = event.target;
+
         if (target.classList.contains('category-item')) {
             const category = target.dataset.category;
-            getGoods(renderCard, (goods) => {
-                const newGoods = goods.filter(item => {
-                    return item.category.includes(category)
-                });
-                return newGoods
-            })
-        }
-    }
+            getGoods(renderCard, goods => 
+                goods.filter(item => 
+                    item.category.includes(category))
+               )}
+        };
 
+
+    cartBtn.addEventListener('click', openCart);
+    cart.addEventListener('click', closeCart);
     category.addEventListener('click', choiceCategory);
 
     getGoods(renderCard, randomSort);
-
 });
