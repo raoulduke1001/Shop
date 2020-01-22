@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const cartCounter = cartBtn.querySelector('.counter');
     const wishListCounter = wishListBtn.querySelector('.counter');
     const wishList = [];
+    const goodsBasket = {};
+    const cartWrapper = document.querySelector('.cart-wrapper');
 
     const loading = () => {
         goodsWrapper.innerHTML = `<div id="spinner"><div class="spinner-loading"><div><div><div></div>
@@ -35,22 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return card;
     };
 
-    const closeCart = (e) => {
-        const target = e.target;
-        if (target === cart ||
-            target.classList.contains('cart-close') ||
-            e.key === 'Escape') {
-            cart.style.display = '';
-            document.removeEventListener('keydown', closeCart);
-        }
-    };
-
-    const openCart = (e) => {
-        e.preventDefault();
-        cart.style.display = 'flex';
-        document.addEventListener('keydown', closeCart);
-    };
-
     const renderCard = (items) => {
         goodsWrapper.textContent = "";
         if (items.length) {
@@ -67,6 +53,67 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
     };
+
+    //create bin
+
+    const createCartGoodsBasket = (id, title, price, img) => {
+        const card = document.createElement('div');
+        card.className = 'goods';
+        card.innerHTML = `<div class="goods-img-wrapper">
+        <img class="goods-img" src="${img}" alt="">
+
+        </div>
+        <div class="goods-description">
+        <h2 class="goods-title">${title}</h2>
+        <p class="goods-price">${price} ₽</p>
+
+        </div>
+        <div class="goods-price-count">
+        <div class="goods-trigger">
+        <button class="goods-add-wishlist ${wishList.includes(id) ? 'active' : ''}"
+        data-goods-id="${id}"></button>
+        <button class="goods-delete" data-goods-id="${id}"></button>
+        </div>
+        <div class="goods-count">1</div>
+        </div>`;
+        return card;
+    };
+
+    const renderBasket = (items) => {
+        cartWrapper.textContent = "";
+        if (items.length) {
+            items.forEach(({
+                id,
+                title,
+                price,
+                imgMin
+            }) => {
+                cartWrapper.appendChild(createCartGoodsBasket(id, title, price, imgMin));
+            })
+        } else {
+            cartWrapper.innerHTML = '<div id="card-empty">🤯 Nothing! Your bin is empty!🤨</div>';
+        }
+
+    };
+
+    ///////bin
+
+    const closeCart = (e) => {
+        const target = e.target;
+        if (target === cart ||
+            target.classList.contains('cart-close') ||
+            e.key === 'Escape') {
+            cart.style.display = '';
+            document.removeEventListener('keydown', closeCart);
+        }
+    };
+
+    const openCart = (e) => {
+        e.preventDefault();
+        cart.style.display = 'flex';
+        document.addEventListener('keydown', closeCart);
+    };
+
 
     const getGoods = (handler, filter) => {
         loading();
@@ -108,8 +155,24 @@ document.addEventListener("DOMContentLoaded", () => {
         input.value = '';
     };
 
+    const getCookie = (name) => {
+        let matches = document.cookie.match(new RegExp(
+            "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        return matches ? decodeURIComponent(matches[1]) : undefined;
+    }
+
+    const cookieQuery = get => {
+        if (get) {
+            getCookie('goodsBasket')
+        } else {
+            document.cookie = `goodsBasket=${JSON.stringify(goodsBasket)}; max-age=86400e3`
+        }
+    }
+
     const checkCount = () => {
         wishListCounter.textContent = wishList.length;
+        cartCounter.textContent = Object.keys(goodsBasket).length;
     }
 
     const storageQuery = (get) => {
@@ -136,11 +199,25 @@ document.addEventListener("DOMContentLoaded", () => {
         storageQuery()
     };
 
+    const addBasket = (id) => {
+        if (goodsBasket[id]) {
+            goodsBasket[id] += 1
+        } else {
+            goodsBasket[id] = 1
+        }
+        checkCount();
+        cookieQuery();
+    }
+
     const handlerGoods = event => {
         const target = event.target;
 
         if (target.classList.contains('card-add-wishlist')) {
             toggleWishList(target.dataset.goodsId, target);
+        }
+        if (target.classList.contains('card-add-cart')) {
+            addBasket(target.dataset.goodsId);
+
         }
 
     }
