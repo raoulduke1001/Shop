@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cartCounter = cartBtn.querySelector('.counter');
     const wishListCounter = wishListBtn.querySelector('.counter');
     const wishList = [];
-    const goodsBasket = {};
+    let goodsBasket = {};
     const cartWrapper = document.querySelector('.cart-wrapper');
 
     const loading = () => {
@@ -164,10 +164,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const cookieQuery = get => {
         if (get) {
-            getCookie('goodsBasket')
+            goodsbasket = JSON.parse(getCookie('goodsBasket'));
         } else {
             document.cookie = `goodsBasket=${JSON.stringify(goodsBasket)}; max-age=86400e3`
         }
+        checkCount()
     }
 
     const checkCount = () => {
@@ -236,4 +237,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     getGoods(renderCard, randomSort);
     storageQuery(true);
+    cookieQuery(true);
 });
