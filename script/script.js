@@ -7,12 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const category = document.querySelector('.category');
     const cartCounter = cartBtn.querySelector('.counter');
     const wishListCounter = wishListBtn.querySelector('.counter');
-    let wishList = [];
+    const wishList = [];
 
     const loading = () => {
         goodsWrapper.innerHTML = `<div id="spinner"><div class="spinner-loading"><div><div><div></div>
         </div><div><div></div></div><div><div></div></div><div><div></div></div></div></div></div>`
-    }
+    };
 
     const createCardGoods = (id, title, price, img) => {
         const card = document.createElement('div');
@@ -114,10 +114,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const storageQuery = (get) => {
         if (get) {
-            return localStorage.getItem('wishlist')
+            if (localStorage.getItem('wishlist')) {
+                JSON.parse(localStorage.getItem('wishlist')).forEach(id => wishList.push(id));
+            }
         } else {
             localStorage.setItem('wishlist', JSON.stringify(wishList));
         }
+        checkCount()
     }
 
     const toggleWishList = (id, elem) => {
@@ -142,11 +145,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
+    const showWishlist = () => {
+        getGoods(renderCard, goods => goods.filter(item => wishList.includes(item.id)));
+    };
+
     cartBtn.addEventListener('click', openCart);
     cart.addEventListener('click', closeCart);
     category.addEventListener('click', choiceCategory);
     search.addEventListener('submit', searchGoods);
     goodsWrapper.addEventListener('click', handlerGoods);
+    wishListBtn.addEventListener('click', showWishlist);
 
     getGoods(renderCard, randomSort);
+    storageQuery(true);
 });
