@@ -14,15 +14,29 @@ document.addEventListener("DOMContentLoaded", () => {
     const loading = (nameFunction) => {
         const spinner = `<div id="spinner"><div class="spinner-loading"><div><div><div></div>
         </div><div><div></div></div><div><div></div></div><div><div></div></div></div></div></div>`;
-        if (nameFunction === 'renderCard'){
+        if (nameFunction === 'renderCard') {
             goodsWrapper.innerHTML = spinner;
         }
-        if (nameFunction === 'renderBasket'){
+        if (nameFunction === 'renderBasket') {
             cartWrapper.innerHTML = spinner
         }
 
     };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     const createCardGoods = (id, title, price, img) => {
         const card = document.createElement('div');
         card.className = 'card-wrapper col-12 col-md-6 col-lg-4 col-xl-3 pb-3';
@@ -115,25 +129,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    const calcTotalPrice = goods =>{
-
-
-        let sum = goods.reduce((accum, item)=>{
-        return accum +item.price * goodsBasket[item.id];
+    const calcTotalPrice = goods => {
+        let sum = goods.reduce((accum, item) => {
+            return accum + item.price * goodsBasket[item.id];
         }, 0)
-
-    //let sum = 0 ;
-    //for (const item of goods){
+        //let sum = 0 ;
+        //for (const item of goods){
         //sum += item.price*goodsBasket[item.id]
-    //}
-    cart.querySelector('.cart-total>span').textContent = sum.toFixed(2);
+        //}
+        cart.querySelector('.cart-total>span').textContent = sum.toFixed(2);
     }
 
 
     const showCardBasket = (goods) => {
         const basketGoods = goods.filter(item => goodsBasket.hasOwnProperty(item.id));
         calcTotalPrice(basketGoods);
-        return basketGoods };
+        return basketGoods
+    };
 
 
     const openCart = (e) => {
@@ -194,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cookieQuery = get => {
         if (get) {
             if (getCookie('goodsBasket')) {
-                Object.assign(goodsbasket,JSON.parse(getCookie('goodsBasket')))
+                Object.assign(goodsbasket, JSON.parse(getCookie('goodsBasket')))
             }
             checkCount();
         } else {
@@ -210,10 +222,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const storageQuery = (get) => {
         if (get) {
             if (localStorage.getItem('wishlist')) {
-                wishList.push(...JSON.parse(localStorage.getItem('wishlist')));}
-               //const wishListStorage = JSON.parse(localStorage.getItem('wishlist'));
-               //wishListStorage.forEach(id => wishList.push(id));
-                checkCount();
+                wishList.push(...JSON.parse(localStorage.getItem('wishlist')));
+            }
+            //const wishListStorage = JSON.parse(localStorage.getItem('wishlist'));
+            //wishListStorage.forEach(id => wishList.push(id));
+            checkCount();
         } else {
             localStorage.setItem('wishlist', JSON.stringify(wishList));
         }
@@ -257,6 +270,23 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
 
+    const removeGoods = (id) => {
+        delete goodsBasket[id];
+        checkCount();
+        cookieQuery();
+        getGoods(renderBasket, showCardBasket)
+    }
+
+    const handlerBasket = (event) => {
+        const target = event.target;
+        if (target.classList.contains('goods-add-wishlist')) {
+            toggleWishList(target.dataset.goodsId, target);
+        }
+        if (target.classList.contains('goods-delete')) {
+            removeGoods(target.dataset.goodsId, target);
+        }
+    }
+
     const showWishlist = () => {
         getGoods(renderCard, goods => goods.filter(item => wishList.includes(item.id)));
     };
@@ -267,6 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
     search.addEventListener('submit', searchGoods);
     goodsWrapper.addEventListener('click', handlerGoods);
     wishListBtn.addEventListener('click', showWishlist);
+    cartWrapper.addEventListener('click', handlerBasket);
 
     getGoods(renderCard, randomSort);
     storageQuery(true);
