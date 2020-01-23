@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cartCounter = cartBtn.querySelector('.counter');
     const wishListCounter = wishListBtn.querySelector('.counter');
     const wishList = [];
-    let goodsBasket = {};
+    const goodsBasket = {};
     const cartWrapper = document.querySelector('.cart-wrapper');
 
     const loading = (nameFunction) => {
@@ -115,7 +115,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    const showCardBasket = goods => goods.filter(item => goodsBasket.hasOwnProperty(item.id));
+    const calcTotalPrice = goods =>{
+
+
+        let sum = goods.reduce((accum, item)=>{
+        return accum +item.price * goodsBasket[item.id];
+        }, 0)
+
+    //let sum = 0 ;
+    //for (const item of goods){
+        //sum += item.price*goodsBasket[item.id]
+    //}
+    cart.querySelector('.cart-total>span').textContent = sum.toFixed(2);
+    }
+
+
+    const showCardBasket = (goods) => {
+        const basketGoods = goods.filter(item => goodsBasket.hasOwnProperty(item.id));
+        calcTotalPrice(basketGoods);
+        return basketGoods };
 
 
     const openCart = (e) => {
@@ -176,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cookieQuery = get => {
         if (get) {
             if (getCookie('goodsBasket')) {
-                goodsbasket = JSON.parse(getCookie('goodsBasket'));
+                Object.assign(goodsbasket,JSON.parse(getCookie('goodsBasket')))
             }
             checkCount();
         } else {
@@ -192,9 +210,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const storageQuery = (get) => {
         if (get) {
             if (localStorage.getItem('wishlist')) {
-                JSON.parse(localStorage.getItem('wishlist')).forEach(id => wishList.push(id));
+                wishList.push(...JSON.parse(localStorage.getItem('wishlist')));}
+               //const wishListStorage = JSON.parse(localStorage.getItem('wishlist'));
+               //wishListStorage.forEach(id => wishList.push(id));
                 checkCount();
-            }
         } else {
             localStorage.setItem('wishlist', JSON.stringify(wishList));
         }
