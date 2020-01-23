@@ -11,9 +11,16 @@ document.addEventListener("DOMContentLoaded", () => {
     let goodsBasket = {};
     const cartWrapper = document.querySelector('.cart-wrapper');
 
-    const loading = () => {
-        goodsWrapper.innerHTML = `<div id="spinner"><div class="spinner-loading"><div><div><div></div>
-        </div><div><div></div></div><div><div></div></div><div><div></div></div></div></div></div>`
+    const loading = (nameFunction) => {
+        const spinner = `<div id="spinner"><div class="spinner-loading"><div><div><div></div>
+        </div><div><div></div></div><div><div></div></div><div><div></div></div></div></div></div>`;
+        if (nameFunction === 'renderCard'){
+            goodsWrapper.innerHTML = spinner;
+        }
+        if (nameFunction === 'renderBasket'){
+            cartWrapper.innerHTML = spinner
+        }
+
     };
 
     const createCardGoods = (id, title, price, img) => {
@@ -74,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
         data-goods-id="${id}"></button>
         <button class="goods-delete" data-goods-id="${id}"></button>
         </div>
-        <div class="goods-count">1</div>
+        <div class="goods-count">${goodsBasket[id]}</div>
         </div>`;
         return card;
     };
@@ -108,15 +115,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    const showCardBasket = goods => goods.filter(item => goodsBasket.hasOwnProperty(item.id));
+
+
     const openCart = (e) => {
         e.preventDefault();
         cart.style.display = 'flex';
         document.addEventListener('keydown', closeCart);
+        getGoods(renderBasket, showCardBasket);
     };
 
 
     const getGoods = (handler, filter) => {
-        loading();
+        loading(handler.name);
         fetch('db/db.json')
             .then(response => response.json())
             .then(filter)
@@ -164,11 +175,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const cookieQuery = get => {
         if (get) {
-            goodsbasket = JSON.parse(getCookie('goodsBasket'));
+            if (getCookie('goodsBasket')) {
+                goodsbasket = JSON.parse(getCookie('goodsBasket'));
+            }
+            checkCount();
         } else {
             document.cookie = `goodsBasket=${JSON.stringify(goodsBasket)}; max-age=86400e3`
         }
-        checkCount()
     }
 
     const checkCount = () => {
@@ -180,11 +193,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (get) {
             if (localStorage.getItem('wishlist')) {
                 JSON.parse(localStorage.getItem('wishlist')).forEach(id => wishList.push(id));
+                checkCount();
             }
         } else {
             localStorage.setItem('wishlist', JSON.stringify(wishList));
         }
-        checkCount()
+
     }
 
     const toggleWishList = (id, elem) => {
@@ -208,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         checkCount();
         cookieQuery();
-    }
+    };
 
     const handlerGoods = event => {
         const target = event.target;
@@ -221,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
 
-    }
+    };
 
 
     const showWishlist = () => {

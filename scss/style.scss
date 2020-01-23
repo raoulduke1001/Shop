@@ -22,12 +22,15 @@ $pink: #FF63F5;
   25% {
     border: 3px solid $blue;
   }
+
   50% {
     border: 3px solid $second-color;
   }
+
   75% {
     border: 3px solid $pink;
   }
+
   100% {
     border: 3px solid $main-color;
   }
@@ -520,9 +523,7 @@ nav {
     font-size: 16px;
     border-radius: 8px;
 
-    &:hover {
-
-    }
+    &:hover {}
   }
 
   &-add-wishlist {
@@ -702,7 +703,7 @@ nav {
       border: none;
 
       &.active {
-        background-position: 4px  -2633px;
+        background-position: 4px -2633px;
       }
     }
 
@@ -734,6 +735,7 @@ nav {
   0% {
     transform: rotate(0deg)
   }
+
   100% {
     transform: rotate(360deg)
   }
@@ -747,13 +749,13 @@ nav {
   background: none;
 }
 
-.spinner-loading > div > div {
+.spinner-loading>div>div {
   transform-origin: 100px 100px;
   animation: spinner-loading 3.0303030303030303s linear infinite;
   opacity: 0.8
 }
 
-.spinner-loading > div > div > div {
+.spinner-loading>div>div>div {
   position: absolute;
   left: 30px;
   top: 30px;
@@ -763,38 +765,38 @@ nav {
   transform-origin: 100px 100px
 }
 
-.spinner-loading > div div:nth-child(1) {
+.spinner-loading>div div:nth-child(1) {
   animation-duration: 0.7575757575757576s
 }
 
-.spinner-loading > div div:nth-child(1) > div {
+.spinner-loading>div div:nth-child(1)>div {
   background: $main-color;
   transform: rotate(0deg);
 }
 
-.spinner-loading > div div:nth-child(2) {
+.spinner-loading>div div:nth-child(2) {
   animation-duration: 1.0101010101010102s
 }
 
-.spinner-loading > div div:nth-child(2) > div {
+.spinner-loading>div div:nth-child(2)>div {
   background: #FF43D5;
   transform: rotate(0deg);
 }
 
-.spinner-loading > div div:nth-child(3) {
+.spinner-loading>div div:nth-child(3) {
   animation-duration: 1.5151515151515151s
 }
 
-.spinner-loading > div div:nth-child(3) > div {
+.spinner-loading>div div:nth-child(3)>div {
   background: $second-color;
   transform: rotate(0deg);
 }
 
-.spinner-loading > div div:nth-child(4) {
+.spinner-loading>div div:nth-child(4) {
   animation-duration: 3.0303030303030303s
 }
 
-.spinner-loading > div div:nth-child(4) > div {
+.spinner-loading>div div:nth-child(4)>div {
   background: #0061FF;
   transform: rotate(0deg);
 }
@@ -806,7 +808,8 @@ nav {
   position: relative;
   transform: translateZ(0) scale(1);
   backface-visibility: hidden;
-  transform-origin: 0 0; /* see note above */
+  transform-origin: 0 0;
+  /* see note above */
 }
 
 .spinner-loading div {
